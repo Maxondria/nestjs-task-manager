@@ -49,12 +49,12 @@ export class TasksService {
     if (!found) {
       throw new NotFoundException('Task Not Found!');
     }
-
     return found;
   }
 
   deleteTask(id: string): string {
-    this.tasks = this.tasks.filter(task => task.id !== id);
+    const found: Task = this.getTaskById(id);
+    this.tasks = this.tasks.filter(task => task.id !== found.id);
     return 'deleted successfully';
   }
 
