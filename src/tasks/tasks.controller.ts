@@ -11,45 +11,48 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { Task, TaskStatus } from './tasks.model';
+import { TaskStatus } from './task-status.enum';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { GetTasksFilterDTO } from './dto/get-tasks-filter.dto';
 import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipe';
+import { Task } from './task.entity';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
-  getTasks(@Query(ValidationPipe) filterDTO: GetTasksFilterDTO): Task[] {
-    if (Object.keys(filterDTO).length) {
-      return this.tasksService.getTasks(filterDTO);
-    } else {
-      return this.tasksService.getAllTasks();
-    }
+  async getTasks(
+    @Query(ValidationPipe) filterDTO: GetTasksFilterDTO,
+  ): Promise<Task[]> {
+    return await this.tasksService.getTasks(filterDTO);
   }
 
   @Post()
   @UsePipes(ValidationPipe)
-  createTask(@Body() createTaskDTO: CreateTaskDTO): Task {
+  createTask(@Body() createTaskDTO: CreateTaskDTO): Promise<Task> {
     return this.tasksService.createTask(createTaskDTO);
   }
 
   @Get('/:id')
-  getTaskById(@Param('id') id: string): Task {
-    return this.tasksService.getTaskById(id);
+  async getTaskById(@Param('id') id: string): Promise<Task> {
+    return await this.tasksService.getTaskById(id);
   }
 
   @Delete('/:id')
-  deleteTask(@Param('id') id: string): string {
-    return this.tasksService.deleteTask(id);
+  async deleteTask(
+    @Param('id') id: string,
+  ): Promise<{
+    status: string;
+  }> {
+    return await this.tasksService.deleteTask(id);
   }
 
   @Patch('/:id/status')
-  updateTaskStatus(
+  async updateTaskStatus(
     @Param('id') id: string,
     @Body('status', TaskStatusValidationPipe) status: TaskStatus,
-  ): Task {
-    return this.tasksService.updateTaskStatus(id, status);
+  ): Promise<Task> {
+    return await this.tasksService.updateTaskStatus(id, status);
   }
 }
