@@ -9,7 +9,9 @@ export class AuthController {
   @Post('/signup')
   async SignUp(
     @Body(ValidationPipe) authCredetialsDTO: AuthCredetialsDTO,
-  ): Promise<void> {
+  ): Promise<{
+    username: string;
+  }> {
     return await this.authService.SignUp(authCredetialsDTO);
   }
 }

@@ -9,7 +9,11 @@ export class AuthService {
     @InjectRepository(UserRepository) private userRepository: UserRepository,
   ) {}
 
-  async SignUp(authCredetialsDTO: AuthCredetialsDTO): Promise<void> {
+  async SignUp(
+    authCredetialsDTO: AuthCredetialsDTO,
+  ): Promise<{
+    username: string;
+  }> {
     return this.userRepository.SignUp(authCredetialsDTO);
   }
 }
