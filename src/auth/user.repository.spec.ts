@@ -50,4 +50,47 @@ describe('User Repository', () => {
       );
     });
   });
+
+  describe('validateUserPassword()', () => {
+    let user;
+
+    beforeEach(() => {
+      userRepository.findOne = jest.fn();
+      user = {
+        username: mockCredentialsDTO.username,
+        validatePassword: jest.fn(),
+      };
+    });
+
+    it('should return the username in case of valid credentials ', async () => {
+      userRepository.findOne.mockResolvedValue(user);
+      user.validatePassword.mockResolvedValue(true);
+
+      const result = await userRepository.validateUserPassword(
+        mockCredentialsDTO,
+      );
+      expect(result).toEqual('Test User');
+    });
+
+    it('should return null in case of wrong username', async () => {
+      userRepository.findOne.mockResolvedValue(null);
+
+      const result = await userRepository.validateUserPassword(
+        mockCredentialsDTO,
+      );
+      expect(user.validatePassword).not.toHaveBeenCalled();
+      expect(result).toBeNull();
+    });
+
+    it('should return null in case of wrong password', async () => {
+      userRepository.findOne.mockResolvedValue(user);
+      user.validatePassword.mockResolvedValue(false);
+
+      const result = await userRepository.validateUserPassword(
+        mockCredentialsDTO,
+      );
+      expect(user.validatePassword).toHaveBeenCalled();
+      expect(result).toBeNull();
+    });
+  });
 });
