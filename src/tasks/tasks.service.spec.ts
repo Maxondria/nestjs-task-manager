@@ -14,7 +14,12 @@ const mockTaskRepository = () => ({
 });
 
 const mockUser = { id: 1, username: 'Testing User' };
-const mockTask = { title: 'Task', description: 'I am Task' };
+const mockTask = {
+  title: 'Task',
+  description: 'I am Task',
+  status: 'OPEN',
+  save: jest.fn(),
+};
 
 describe('Tasks Service', () => {
   let tasksService;
@@ -97,6 +102,27 @@ describe('Tasks Service', () => {
       expect(tasksService.deleteTask('xxx', mockUser)).rejects.toThrow(
         NotFoundException,
       );
+    });
+  });
+
+  describe('updateTaskStatus()', () => {
+    it('should update a task status', async () => {
+      taskRepository.findOne.mockResolvedValue(mockTask);
+
+      const result = await tasksService.updateTaskStatus(
+        'xxx',
+        'OPEN',
+        mockUser,
+      );
+
+      expect(result).toMatchObject(mockTask);
+    });
+
+    it('should throw an error if the task doesnt exist', () => {
+      taskRepository.findOne.mockResolvedValue(null);
+      expect(
+        tasksService.updateTaskStatus('xxx', 'OPEN', mockUser),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 });
