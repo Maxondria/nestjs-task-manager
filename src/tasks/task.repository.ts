@@ -8,8 +8,7 @@ import { User } from '../auth/user.entity';
 @EntityRepository(Task)
 export class TaskRepository extends Repository<Task> {
   async createTask(createTaskDTO: CreateTaskDTO, user: User): Promise<Task> {
-    const task = new Task();
-
+    const task = this.create();
     task.title = createTaskDTO.title;
     task.description = createTaskDTO.description;
     task.status = TaskStatus.OPEN;
@@ -36,7 +35,7 @@ export class TaskRepository extends Repository<Task> {
         { search: `%${search}%` },
       );
     }
- 
+
     const tasks = await query.getMany();
     return tasks;
   }
