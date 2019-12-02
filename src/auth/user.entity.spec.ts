@@ -10,6 +10,7 @@ describe('User Entity', () => {
     user.password = 'test password';
     bcrypt.hash = jest.fn();
   });
+  
   describe('validatePassword()', () => {
     it('should return true if password is valid', async () => {
       bcrypt.hash.mockResolvedValue(user.password);
